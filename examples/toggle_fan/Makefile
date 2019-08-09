@@ -1,12 +1,12 @@
-PROGRAM ?= sonoff
+PROGRAM ?= toggle_fan
 
 EXTRA_COMPONENTS = \
 	extras/http-parser \
 	extras/dhcpserver \
-	$(abspath ../components/esp-8266/wifi_config) \
-	$(abspath ../components/common/wolfssl) \
-	$(abspath ../components/common/cJSON) \
-	$(abspath ../components/common/homekit)
+	$(abspath ../../components/esp-8266/wifi_config) \
+	$(abspath ../../components/common/wolfssl) \
+	$(abspath ../../components/common/cJSON) \
+	$(abspath ../../components/common/homekit)
 
 FLASH_SIZE ?= 8
 FLASH_MODE ?= dout
