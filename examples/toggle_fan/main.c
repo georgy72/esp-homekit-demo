@@ -34,9 +34,9 @@
 
 #define NO_CONNECTION_WATCHDOG_TIMEOUT 120000
 
-const int led_state_read_gpio = 14;
+const int led_state_gpio_read = 14;
 const int one_hours_button_write_gpio = 12;
-const int big_button_read_gpio = 0;
+const int big_button_gpio_read = 0;
 const int big_button_write_gpio = 0;
 const int led_on_board_gpio = 2;
 
@@ -122,15 +122,15 @@ void gpio_init() {
     gpio_enable(one_hours_button_write_gpio, GPIO_OUTPUT);
     gpio_write(one_hours_button_write_gpio, true);
 
-    gpio_enable(led_state_read_gpio, GPIO_INPUT);
+    gpio_enable(led_state_gpio_read, GPIO_INPUT);
 
-    gpio_enable(big_button_read_gpio, GPIO_INPUT);
+    gpio_enable(big_button_gpio_read, GPIO_INPUT);
 
     gpio_enable(big_button_write_gpio, GPIO_OUTPUT);
 }
 
 void gpio_update(bool value) {
-    switch_on.value.bool_value = read_gpio(led_state_read_gpio);
+    switch_on.value.bool_value = gpio_read(led_state_gpio_read);
     printf("State fan Value: %d\n", switch_on.value.bool_value);
     homekit_characteristic_notify(&switch_on, switch_on.value);
 }
@@ -250,11 +250,11 @@ void user_init(void) {
     wifi_config_init("Fan-switch", NULL, on_wifi_ready);
     gpio_init();
 
-    if (button_create(big_button_read_gpio, 0, 30000, button_callback)) {
+    if (button_create(big_button_gpio_read, 0, 30000, button_callback)) {
         printf("Failed to initialize button\n");
     }
-    if (contact_sensor_create(led_state_read_gpio, contact_sensor_callback)) {
-        printf("Failed to initialize led_state_read_gpio\n");
+    if (contact_sensor_create(led_state_gpio_read, contact_sensor_callback)) {
+        printf("Failed to initialize led_state_gpio_read\n");
     }
 
     create_wifi_connection_watchdog();
