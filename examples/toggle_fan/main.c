@@ -77,8 +77,8 @@ void off_fan(){
 }
 
 void toggle_fan(bool on) {
+    led_write(on)
     if (on){
-
         on_fan();
     } else {
         off_fan();
@@ -158,7 +158,7 @@ void contact_sensor_callback(uint8_t gpio, contact_sensor_state_t state) {
 
     printf("Toggling '%s' FAN .\n", state == false ? "on" : "off");
 
-    switch_on.value.bool_value = !state;
+    switch_on.value.bool_value = HOMEKIT_UINT8(!state)
     led_write(!state);
 
     homekit_characteristic_notify(&switch_on, switch_on.value);
@@ -198,7 +198,7 @@ void create_wifi_connection_watchdog() {
 homekit_characteristic_t name = HOMEKIT_CHARACTERISTIC_(NAME, "Fan Switch");
 
 homekit_accessory_t *accessories[] = {
-    HOMEKIT_ACCESSORY(.id=1, .category=homekit_accessory_category_switch, .services=(homekit_service_t*[]){
+    HOMEKIT_ACCESSORY(.id=1, .category=homekit_accessory_category_fan, .services=(homekit_service_t*[]){
         HOMEKIT_SERVICE(ACCESSORY_INFORMATION, .characteristics=(homekit_characteristic_t*[]){
             &name,
             HOMEKIT_CHARACTERISTIC(MANUFACTURER, "iTEAD"),
