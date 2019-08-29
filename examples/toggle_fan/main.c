@@ -132,7 +132,7 @@ void gpio_init() {
 }
 
 void gpio_update() {
-    switch_on.value.bool_value = ~gpio_read(led_state_gpio_read);
+    // switch_on.value.bool_value = ~gpio_read(led_state_gpio_read);
     printf("State fan Value: %d\n", switch_on.value.bool_value);
     homekit_characteristic_notify(&switch_on, switch_on.value);
 }
