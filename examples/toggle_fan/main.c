@@ -158,7 +158,8 @@ void contact_sensor_callback(uint8_t gpio, contact_sensor_state_t state) {
 
     printf("Toggling '%s' FAN .\n", state == false ? "on" : "off");
 
-    switch_on.value.bool_value = HOMEKIT_UINT8(!state)
+    switch_on.value.bool_value = !state;
+    
     led_write(!state);
 
     homekit_characteristic_notify(&switch_on, switch_on.value);
