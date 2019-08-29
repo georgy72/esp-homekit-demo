@@ -257,5 +257,5 @@ void user_init(void) {
 
     create_wifi_connection_watchdog();
 
-    // gpio_update();
+    gpio_update();
 }
