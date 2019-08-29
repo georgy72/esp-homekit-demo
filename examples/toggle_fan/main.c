@@ -246,16 +246,16 @@ void user_init(void) {
     create_accessory_name();
     
     wifi_config_init("Fan-switch", NULL, on_wifi_ready);
-    gpio_init();
+    // gpio_init();
 
-    if (button_create(one_minutes_button_gpio_read, 0, 30000, button_callback)) {
-        printf("Failed to initialize button\n");
-    }
-    if (contact_sensor_create(led_state_gpio_read, contact_sensor_callback)) {
-        printf("Failed to initialize led_state_gpio_read\n");
-    }
+    // if (button_create(one_minutes_button_gpio_read, 0, 30000, button_callback)) {
+    //     printf("Failed to initialize button\n");
+    // }
+    // if (contact_sensor_create(led_state_gpio_read, contact_sensor_callback)) {
+    //     printf("Failed to initialize led_state_gpio_read\n");
+    // }
 
-    create_wifi_connection_watchdog();
+    // create_wifi_connection_watchdog();
 
     // gpio_update();
 }
