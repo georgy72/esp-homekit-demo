@@ -208,7 +208,7 @@ homekit_accessory_t *accessories[] = {
             NULL
         }),
         HOMEKIT_SERVICE(SWITCH, .primary=true, .characteristics=(homekit_characteristic_t*[]){
-            HOMEKIT_CHARACTERISTIC(NAME, "Sonoff Switch"),
+            HOMEKIT_CHARACTERISTIC(NAME, "Fan Switch"),
             &switch_on,
             NULL
         }),
@@ -255,7 +255,7 @@ void user_init(void) {
         printf("Failed to initialize led_state_gpio_read\n");
     }
 
-    // create_wifi_connection_watchdog();
+    create_wifi_connection_watchdog();
 
     // gpio_update();
 }
