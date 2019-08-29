@@ -34,10 +34,11 @@
 
 #define NO_CONNECTION_WATCHDOG_TIMEOUT 120000
 
-const int led_state_gpio_read = 14;
-const int one_hours_button_write_gpio = 12;
-const int big_button_gpio_read = 0;
-const int big_button_write_gpio = 0;
+const int led_state_gpio_read = 14; //D5 на светодиод
+const int one_hours_button_write_gpio = 13; //D7 на кнопку один час
+const int big_button_write_gpio = 15; //D8 на большую кнопку
+const int one_minutes_button_gpio_read = 12; //D6 на кнопку одна минута
+
 const int led_on_board_gpio = 2;
 
 bool is_connected_to_wifi = false;
@@ -64,15 +65,15 @@ void led_blink(int times) {
 }
 
 void on_fan(){
-    gpio_write(one_hours_button_write_gpio, true);
-    vTaskDelay(100 / portTICK_PERIOD_MS);
     gpio_write(one_hours_button_write_gpio, false);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+    gpio_write(one_hours_button_write_gpio, true);
 }
 
 void off_fan(){
-    gpio_write(big_button_write_gpio, true);
-    vTaskDelay(100 / portTICK_PERIOD_MS);
     gpio_write(big_button_write_gpio, false);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+    gpio_write(big_button_write_gpio, true);
 }
 
 void toggle_fan(bool on) {
@@ -124,13 +125,14 @@ void gpio_init() {
 
     gpio_enable(led_state_gpio_read, GPIO_INPUT);
 
-    gpio_enable(big_button_gpio_read, GPIO_INPUT);
+    gpio_enable(one_minutes_button_gpio_read, GPIO_INPUT);
 
     gpio_enable(big_button_write_gpio, GPIO_OUTPUT);
+    gpio_write(big_button_write_gpio, true);
 }
 
 void gpio_update() {
-    switch_on.value.bool_value = gpio_read(led_state_gpio_read);
+    switch_on.value.bool_value = ~gpio_read(led_state_gpio_read);
     printf("State fan Value: %d\n", switch_on.value.bool_value);
     homekit_characteristic_notify(&switch_on, switch_on.value);
 }
@@ -152,15 +154,11 @@ void button_callback(uint8_t gpio, button_event_t event) {
 }
 
 void contact_sensor_callback(uint8_t gpio, contact_sensor_state_t state) {
-    
-    if (state){
-        printf("Toggling on FAN\n");
-    } else {
-        printf("Toggling off FAN\n");
-    }
 
-    switch_on.value.bool_value = state;
-    led_write(state);
+    printf("Toggling '%s' FAN .\n", state == false ? "on" : "off");
+
+    switch_on.value.bool_value = ~state;
+    led_write(~state);
 
     homekit_characteristic_notify(&switch_on, switch_on.value);
 }
@@ -250,7 +248,7 @@ void user_init(void) {
     wifi_config_init("Fan-switch", NULL, on_wifi_ready);
     gpio_init();
 
-    if (button_create(big_button_gpio_read, 0, 30000, button_callback)) {
+    if (button_create(one_minutes_button_gpio_read, 0, 30000, button_callback)) {
         printf("Failed to initialize button\n");
     }
     if (contact_sensor_create(led_state_gpio_read, contact_sensor_callback)) {
