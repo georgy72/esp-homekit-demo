@@ -153,15 +153,15 @@ void button_callback(uint8_t gpio, button_event_t event) {
     }
 }
 
-void contact_sensor_callback(uint8_t gpio, contact_sensor_state_t state) {
+// void contact_sensor_callback(uint8_t gpio, contact_sensor_state_t state) {
 
-    printf("Toggling '%s' FAN .\n", state == false ? "on" : "off");
+//     printf("Toggling '%s' FAN .\n", state == false ? "on" : "off");
 
-    switch_on.value.bool_value = ~state;
-    led_write(~state);
+//     switch_on.value.bool_value = ~state;
+//     led_write(~state);
 
-    homekit_characteristic_notify(&switch_on, switch_on.value);
-}
+//     homekit_characteristic_notify(&switch_on, switch_on.value);
+// }
 
 void switch_identify_task(void *_args) {
     // We identify the Fan by Flashing it's LED.
