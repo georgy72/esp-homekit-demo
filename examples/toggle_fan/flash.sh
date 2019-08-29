@@ -4,7 +4,7 @@ esptool.py -p $SONOFF_PORT erase_flash
 
 esptool.py \
             -p $SONOFF_PORT \
-            --baud 230400 \
+            --baud 460800 \
             write_flash \
             -fs 32m \
             -fm dio \
