@@ -132,7 +132,7 @@ void gpio_init() {
 }
 
 void gpio_update() {
-    // switch_on.value.bool_value = ~gpio_read(led_state_gpio_read);
+    switch_on.value.bool_value = !gpio_read(led_state_gpio_read);
     printf("State fan Value: %d\n", switch_on.value.bool_value);
     homekit_characteristic_notify(&switch_on, switch_on.value);
 }
@@ -225,6 +225,7 @@ homekit_server_config_t config = {
 void on_wifi_ready() {
     is_connected_to_wifi = true;
     homekit_server_init(&config);
+    // gpio_update();
 }
 
 void create_accessory_name() {
@@ -257,5 +258,4 @@ void user_init(void) {
 
     create_wifi_connection_watchdog();
 
-    gpio_update();
 }
