@@ -223,7 +223,6 @@ homekit_server_config_t config = {
 };
 
 void on_wifi_ready() {
-    is_connected_to_wifi = true;
     homekit_server_init(&config);
 }
 
