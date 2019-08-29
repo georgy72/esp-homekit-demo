@@ -77,7 +77,7 @@ void off_fan(){
 }
 
 void toggle_fan(bool on) {
-    led_write(on)
+    led_write(on);
     if (on){
         on_fan();
     } else {
