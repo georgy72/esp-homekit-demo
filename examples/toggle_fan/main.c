@@ -29,7 +29,7 @@
 #include <homekit/characteristics.h>
 #include <wifi_config.h>
 
-#include "contact_sensor.h"
+// #include "contact_sensor.h"
 #include "button.h"
 
 #define NO_CONNECTION_WATCHDOG_TIMEOUT 120000
@@ -200,15 +200,15 @@ homekit_accessory_t *accessories[] = {
     HOMEKIT_ACCESSORY(.id=1, .category=homekit_accessory_category_switch, .services=(homekit_service_t*[]){
         HOMEKIT_SERVICE(ACCESSORY_INFORMATION, .characteristics=(homekit_characteristic_t*[]){
             &name,
-            HOMEKIT_CHARACTERISTIC(MANUFACTURER, "Fan"),
+            HOMEKIT_CHARACTERISTIC(MANUFACTURER, "iTEAD"),
             HOMEKIT_CHARACTERISTIC(SERIAL_NUMBER, "037A2BABF19D"),
             HOMEKIT_CHARACTERISTIC(MODEL, "Basic"),
-            HOMEKIT_CHARACTERISTIC(FIRMWARE_REVISION, "1.0.0"),
+            HOMEKIT_CHARACTERISTIC(FIRMWARE_REVISION, "0.1.6"),
             HOMEKIT_CHARACTERISTIC(IDENTIFY, switch_identify),
             NULL
         }),
         HOMEKIT_SERVICE(SWITCH, .primary=true, .characteristics=(homekit_characteristic_t*[]){
-            HOMEKIT_CHARACTERISTIC(NAME, "Fan Switch"),
+            HOMEKIT_CHARACTERISTIC(NAME, "Sonoff Switch"),
             &switch_on,
             NULL
         }),
