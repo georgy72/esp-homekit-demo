@@ -61,7 +61,7 @@ void off_fan(){
 }
 
 void toggle_fan_task(void *_args) {
-    if (on){
+    if (switch_on.value.bool_value){
         on_fan();
     } else {
         off_fan();
@@ -69,7 +69,7 @@ void toggle_fan_task(void *_args) {
     vTaskDelete(NULL);
 }
 
-void toggle_fan(bool on) {
+void toggle_fan() {
     led_write(on);
     xTaskCreate(toggle_fan_task, "Toggle fan", 128, NULL, 2, NULL);
 }
@@ -124,7 +124,7 @@ void gpio_update() {
 }
 
 void switch_on_callback(homekit_characteristic_t *_ch, homekit_value_t on, void *context) {
-    toggle_fan(switch_on.value.bool_value);
+    toggle_fan();
 }
 
 void button_callback(uint8_t gpio, button_event_t event) {
