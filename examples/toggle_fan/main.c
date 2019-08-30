@@ -253,6 +253,9 @@ void user_init(void) {
     if (button_create(one_minutes_button_gpio_read, 0, 4000, button_callback)) {
         printf("Failed to initialize button\n");
     }
+    if (button_create(12, 0, 4000, button_callback)) {
+        printf("Failed to initialize button\n");
+    }
     if (contact_sensor_create(led_state_gpio_read, contact_sensor_callback)) {
         printf("Failed to initialize led_state_gpio_read\n");
     }
