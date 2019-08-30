@@ -26,6 +26,13 @@ const int button_read_one_minutes = 0; //D6 на кнопку одна мину�
 
 const int led_on_board_gpio = 2;
 
+// The GPIO pin that is connected to last pin of the programming strip of the Sonoff Basic.
+const int pin_gpio = 14;
+// The GPIO pin that is connected to the relay on the Sonoff Basic.
+const int relay_gpio = 12;
+// The GPIO pin that is connected to the LED on the Sonoff Basic.
+
+
 bool is_connected_to_wifi = false;
 void switch_on_callback(homekit_characteristic_t *_ch, homekit_value_t on, void *context);
 void button_callback(uint8_t gpio, button_event_t event);
@@ -34,29 +41,13 @@ void led_write(bool on) {
     gpio_write(led_on_board_gpio, on ? 0 : 1);
 }
 
+void relay_write(bool on) {
+    gpio_write(relay_gpio, on ? 1 : 0);
+    led_write(on);
+}
+
 bool led_read() {
     return gpio_read(led_on_board_gpio);
-}
-
-void on_fan(){
-    gpio_write(button_write_one_hours_gpio, false);
-    vTaskDelay(100 / portTICK_PERIOD_MS);
-    gpio_write(button_write_one_hours_gpio, true);
-}
-
-void off_fan(){
-    gpio_write(button_write_big_gpio, false);
-    vTaskDelay(100 / portTICK_PERIOD_MS);
-    gpio_write(button_write_big_gpio, true);
-}
-
-void toggle_fan(bool on) {
-    led_write(on);
-    if (on){
-        on_fan();
-    } else {
-        off_fan();
-    }
 }
 
 void led_blink(int times) {
@@ -104,28 +95,30 @@ homekit_characteristic_t switch_on = HOMEKIT_CHARACTERISTIC_(
 
 void gpio_init() {
     gpio_enable(led_on_board_gpio, GPIO_OUTPUT);
-    led_write(false);
-    
-    gpio_enable(button_write_one_hours_gpio, GPIO_OUTPUT);
-    gpio_write(button_write_one_hours_gpio, true);
-
-    gpio_enable(button_write_big_gpio, GPIO_OUTPUT);
-    gpio_write(button_write_big_gpio, true);
+    gpio_enable(relay_gpio, GPIO_OUTPUT);
+    relay_write(switch_on.value.bool_value);
 }
 
+void set_relay_value(bool value) {
+    printf("Relay Value: %d\n", value);
+    switch_on.value.bool_value = value;
+    relay_write(value);
+    homekit_characteristic_notify(&switch_on, switch_on.value);
+}
 
+void toggle_relay_value() {
+    printf("Toggling relay\n");
+    set_relay_value(!switch_on.value.bool_value);
+}
 
 void switch_on_callback(homekit_characteristic_t *_ch, homekit_value_t on, void *context) {
-    toggle_fan(switch_on.value.bool_value);
+    relay_write(switch_on.value.bool_value);
 }
 
 void button_callback(uint8_t gpio, button_event_t event) {
     switch (event) {
         case button_event_single_press:
-            printf("Relay Value: %d\n", switch_on.value.bool_value);
-            switch_on.value.bool_value = !switch_on.value.bool_value;
-            toggle_fan(switch_on.value.bool_value);
-            homekit_characteristic_notify(&switch_on, switch_on.value);
+            toggle_relay_value();
             break;
         case button_event_long_press:
             reset_configuration();
@@ -225,4 +218,6 @@ void user_init(void) {
     }
 
     create_wifi_connection_watchdog();
+
+    set_relay_value(false);
 }
