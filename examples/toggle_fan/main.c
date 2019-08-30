@@ -143,7 +143,7 @@ void button_callback(uint8_t gpio, button_event_t event) {
 
 void contact_sensor_callback(uint8_t gpio, contact_sensor_state_t state) {
 
-    switch_on.value.bool_value = state == CONTACT_OPEN ? 1 : 0;
+    switch_on.value.bool_value = state != CONTACT_OPEN ? 1 : 0;
 
     printf("Toggling '%s' FAN .\n", switch_on.value.bool_value == false ? "on" : "off");
 
