@@ -219,5 +219,5 @@ void user_init(void) {
 
     create_wifi_connection_watchdog();
 
-    set_relay_value(POWER_ON_STATE);
+    set_relay_value(false);
 }
