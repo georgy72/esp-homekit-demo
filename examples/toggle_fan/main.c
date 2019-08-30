@@ -93,6 +93,7 @@ void off_fan(){
 }
 
 void toggle_fan_task(void *_args) {
+    printf("Fan power: %d\n", switch_on.value.bool_value);
     if (switch_on.value.bool_value){
         on_fan();
     } else {
@@ -131,8 +132,6 @@ void button_callback(uint8_t gpio, button_event_t event) {
     switch (event) {
         case button_event_single_press:
             printf("Press button: %d\n", gpio);
-            switch_on.value.bool_value = !switch_on.value.bool_value;
-            homekit_characteristic_notify(&switch_on, switch_on.value);
             break;
         case button_event_long_press:
             reset_configuration();
