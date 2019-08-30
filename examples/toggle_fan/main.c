@@ -21,7 +21,7 @@ const int led_state_gpio_read = 14; //D5 на светодиод
 const int button_write_one_hours_gpio = 13; //D7 на кнопку один час
 const int button_write_big_gpio = 15; //D8 на большую кнопку
 
-const int button_read_one_minutes = 4; //D6 на кнопку одна минута
+const int button_read_one_minutes = 12; //D6 на кнопку одна минута
 
 const int led_on_board_gpio = 2;
 
@@ -239,9 +239,9 @@ void user_init(void) {
     if (button_create(button_read_one_minutes, 0, 4000, button_callback)) {
         printf("Failed to initialize button\n");
     }
-    // if (button_create(0, 0, 4000, button_callback)) {
-    //     printf("Failed to initialize button\n");
-    // }
+    if (button_create(0, 0, 4000, button_callback)) {
+        printf("Failed to initialize button\n");
+    }
     if (contact_sensor_create(led_state_gpio_read, contact_sensor_callback)) {
         printf("Failed to initialize led_state_gpio_read\n");
     }
