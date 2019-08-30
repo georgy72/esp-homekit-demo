@@ -12,6 +12,7 @@
 #include <wifi_config.h>
 
 #include "button.h"
+#include "contact_sensor.h"
 
 #define NO_CONNECTION_WATCHDOG_TIMEOUT 120000
 
