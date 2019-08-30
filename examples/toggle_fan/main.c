@@ -160,7 +160,7 @@ void contact_sensor_callback(uint8_t gpio, contact_sensor_state_t state) {
 
     switch_on.value.bool_value = state != CONTACT_OPEN ? false : true;
 
-    homekit_characteristic_notify(&switch_on, switch_on.value);
+    // homekit_characteristic_notify(&switch_on, switch_on.value);
 }
 
 void switch_identify_task(void *_args) {
