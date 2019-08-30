@@ -37,7 +37,7 @@
 const int led_state_gpio_read = 14; //D5 на светодиод
 const int one_hours_button_write_gpio = 13; //D7 на кнопку один час
 const int big_button_write_gpio = 15; //D8 на большую кнопку
-const int one_minutes_button_gpio_read = 16; //D6 на кнопку одна минута
+const int one_minutes_button_gpio_read = 0; //D6 на кнопку одна минута
 
 const int led_on_board_gpio = 2;
 
