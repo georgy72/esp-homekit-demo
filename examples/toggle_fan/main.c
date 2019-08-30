@@ -122,10 +122,6 @@ void gpio_init() {
     gpio_enable(one_hours_button_write_gpio, GPIO_OUTPUT);
     gpio_write(one_hours_button_write_gpio, true);
 
-    gpio_enable(led_state_gpio_read, GPIO_INPUT);
-
-    // gpio_enable(one_minutes_button_gpio_read, GPIO_INPUT);
-
     gpio_enable(big_button_write_gpio, GPIO_OUTPUT);
     gpio_write(big_button_write_gpio, true);
 }
@@ -255,9 +251,9 @@ void user_init(void) {
     wifi_config_init("Fan-switch", NULL, on_wifi_ready);
     gpio_init();
 
-    if (button_create(one_minutes_button_gpio_read, 0, 4000, button_callback)) {
-        printf("Failed to initialize button\n");
-    }
+    // if (button_create(one_minutes_button_gpio_read, 0, 4000, button_callback)) {
+    //     printf("Failed to initialize button\n");
+    // }
     if (button_create(12, 0, 4000, button_callback)) {
         printf("Failed to initialize button\n");
     }
