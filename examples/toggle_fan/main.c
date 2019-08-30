@@ -125,8 +125,8 @@ void switch_on_callback(homekit_characteristic_t *_ch, homekit_value_t on, void 
 void button_callback(uint8_t gpio, button_event_t event) {
     switch (event) {
         case button_event_single_press:
-            printf("Relay Value: %d\n", !state);
-            switch_on.value.bool_value = !state;
+            printf("Relay Value: %d\n", switch_on.value.bool_value);
+            switch_on.value.bool_value = !switch_on.value.bool_value;
             homekit_characteristic_notify(&switch_on, switch_on.value);
             break;
         case button_event_long_press:
