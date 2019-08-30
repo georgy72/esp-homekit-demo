@@ -16,7 +16,6 @@
  */
 
 #include <stdio.h>
-#include <string.h>
 #include <espressif/esp_wifi.h>
 #include <espressif/esp_sta.h>
 #include <espressif/esp_common.h>
@@ -29,7 +28,6 @@
 #include <homekit/characteristics.h>
 #include <wifi_config.h>
 
-#include "contact_sensor.h"
 #include "button.h"
 
 #define NO_CONNECTION_WATCHDOG_TIMEOUT 120000
@@ -162,14 +160,14 @@ void button_callback(uint8_t gpio, button_event_t event) {
     }
 }
 
-void contact_sensor_callback(uint8_t gpio, contact_sensor_state_t state) {
+// void contact_sensor_callback(uint8_t gpio, contact_sensor_state_t state) {
 
-    printf("Toggling '%s' FAN .\n", state == false ? "on" : "off");
+//     printf("Toggling '%s' FAN .\n", state == false ? "on" : "off");
 
-    switch_on.value.bool_value = !state;
+//     switch_on.value.bool_value = !state;
 
-    homekit_characteristic_notify(&switch_on, switch_on.value);
-}
+//     homekit_characteristic_notify(&switch_on, switch_on.value);
+// }
 
 void switch_identify_task(void *_args) {
     // We identify the Fan by Flashing it's LED.
@@ -263,9 +261,9 @@ void user_init(void) {
     if (button_create(12, 0, 4000, button_callback)) {
         printf("Failed to initialize button\n");
     }
-    if (contact_sensor_create(led_state_gpio_read, contact_sensor_callback)) {
-        printf("Failed to initialize led_state_gpio_read\n");
-    }
+    // if (contact_sensor_create(led_state_gpio_read, contact_sensor_callback)) {
+    //     printf("Failed to initialize led_state_gpio_read\n");
+    // }
 
     create_wifi_connection_watchdog();
 }
