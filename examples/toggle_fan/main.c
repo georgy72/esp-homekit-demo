@@ -61,6 +61,7 @@ void off_fan(){
 
 void toggle_fan(bool on) {
     led_write(on);
+
     // if (on){
     //     on_fan();
     // } else {
@@ -124,14 +125,9 @@ void switch_on_callback(homekit_characteristic_t *_ch, homekit_value_t on, void 
 void button_callback(uint8_t gpio, button_event_t event) {
     switch (event) {
         case button_event_single_press:
-            // printf("Press button: %d\n", gpio);
-            // switch_on.value.bool_value = !switch_on.value.bool_value;
-
-            // homekit_characteristic_notify(&switch_on, switch_on.value);
-            printf("Toggling relay\n");
+            printf("Press button: %d\n", gpio);
             switch_on.value.bool_value = !switch_on.value.bool_value;
-            toggle_fan(switch_on.value.bool_value);
-            homekit_characteristic_notify(&switch_on, HOMEKIT_UINT8(0));
+            homekit_characteristic_notify(&switch_on, switch_on.value);
             break;
         case button_event_long_press:
             reset_configuration();
@@ -141,21 +137,20 @@ void button_callback(uint8_t gpio, button_event_t event) {
     }
 }
 
-// void contact_sensor_callback(uint8_t gpio, contact_sensor_state_t state) {
+void contact_sensor_callback(uint8_t gpio, contact_sensor_state_t state) {
 
-//     printf("Toggling '%s' FAN .\n", state == false ? "on" : "off");
+    printf("Toggling '%s' FAN .\n", state == false ? "on" : "off");
 
-//     switch_on.value.bool_value = !state;
+    switch_on.value.bool_value = !state;
 
-//     homekit_characteristic_notify(&switch_on, switch_on.value);
-// }
+    homekit_characteristic_notify(&switch_on, switch_on.value);
+}
 
 void switch_identify_task(void *_args) {
     // We identify the Fan by Flashing it's LED.
     for (int i=0; i<3; i++) {
         led_blink(2);
     }
-
     vTaskDelete(NULL);
 }
 
@@ -184,7 +179,7 @@ void create_wifi_connection_watchdog() {
 homekit_characteristic_t name = HOMEKIT_CHARACTERISTIC_(NAME, "Fan Switch");
 
 homekit_accessory_t *accessories[] = {
-    HOMEKIT_ACCESSORY(.id=1, .category=homekit_accessory_category_switch, .services=(homekit_service_t*[]){
+    HOMEKIT_ACCESSORY(.id=1, .category=homekit_accessory_category_fan, .services=(homekit_service_t*[]){
         HOMEKIT_SERVICE(ACCESSORY_INFORMATION, .characteristics=(homekit_characteristic_t*[]){
             &name,
             HOMEKIT_CHARACTERISTIC(MANUFACTURER, "iTEAD"),
@@ -212,7 +207,7 @@ homekit_server_config_t config = {
 void on_wifi_ready() {
     is_connected_to_wifi = true;
     homekit_server_init(&config);
-    // gpio_update();
+    gpio_update();
 }
 
 void create_accessory_name() {
@@ -239,12 +234,12 @@ void user_init(void) {
     if (button_create(button_read_one_minutes, 0, 4000, button_callback)) {
         printf("Failed to initialize button\n");
     }
-    // if (button_create(12, 0, 4000, button_callback)) {
-    //     printf("Failed to initialize button\n");
-    // }
-    // if (contact_sensor_create(led_state_gpio_read, contact_sensor_callback)) {
-    //     printf("Failed to initialize led_state_gpio_read\n");
-    // }
+    if (button_create(0, 0, 4000, button_callback)) {
+        printf("Failed to initialize button\n");
+    }
+    if (contact_sensor_create(led_state_gpio_read, contact_sensor_callback)) {
+        printf("Failed to initialize led_state_gpio_read\n");
+    }
 
     create_wifi_connection_watchdog();
 }
