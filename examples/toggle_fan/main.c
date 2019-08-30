@@ -145,9 +145,13 @@ void switch_on_callback(homekit_characteristic_t *_ch, homekit_value_t on, void 
 void button_callback(uint8_t gpio, button_event_t event) {
     switch (event) {
         case button_event_single_press:
-            printf("Press button: %d\n", gpio);
-            switch_on.value.bool_value = !switch_on.value.bool_value;
+            // printf("Press button: %d\n", gpio);
+            // switch_on.value.bool_value = !switch_on.value.bool_value;
 
+            // homekit_characteristic_notify(&switch_on, switch_on.value);
+            printf("Toggling relay\n");
+            switch_on.value.bool_value = !switch_on.value.bool_value;
+            toggle_fan(switch_on.value.bool_value);
             homekit_characteristic_notify(&switch_on, switch_on.value);
             break;
         case button_event_long_press:
