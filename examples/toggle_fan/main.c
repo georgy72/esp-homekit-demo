@@ -48,31 +48,7 @@ void led_blink(int times) {
     led_write(led_value);
 }
 
-void on_fan(){
-    gpio_write(button_write_one_hours_gpio, false);
-    vTaskDelay(100 / portTICK_PERIOD_MS);
-    gpio_write(button_write_one_hours_gpio, true);
-}
 
-void off_fan(){
-    gpio_write(button_write_big_gpio, false);
-    vTaskDelay(100 / portTICK_PERIOD_MS);
-    gpio_write(button_write_big_gpio, true);
-}
-
-void toggle_fan_task(void *_args) {
-    if (switch_on.value.bool_value){
-        on_fan();
-    } else {
-        off_fan();
-    }
-    led_write(switch_on.value.bool_value);
-    vTaskDelete(NULL);
-}
-
-void toggle_fan() {
-    xTaskCreate(toggle_fan_task, "Toggle fan", 128, NULL, 2, NULL);
-}
 
 void reset_configuration_task() {
 
@@ -105,6 +81,32 @@ void reset_configuration() {
 homekit_characteristic_t switch_on = HOMEKIT_CHARACTERISTIC_(
     ON, false, .callback=HOMEKIT_CHARACTERISTIC_CALLBACK(switch_on_callback)
 );
+
+void on_fan(){
+    gpio_write(button_write_one_hours_gpio, false);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+    gpio_write(button_write_one_hours_gpio, true);
+}
+
+void off_fan(){
+    gpio_write(button_write_big_gpio, false);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+    gpio_write(button_write_big_gpio, true);
+}
+
+void toggle_fan_task(void *_args) {
+    if (switch_on.value.bool_value){
+        on_fan();
+    } else {
+        off_fan();
+    }
+    led_write(switch_on.value.bool_value);
+    vTaskDelete(NULL);
+}
+
+void toggle_fan() {
+    xTaskCreate(toggle_fan_task, "Toggle fan", 128, NULL, 2, NULL);
+}
 
 void gpio_init() {
     gpio_enable(led_on_board_gpio, GPIO_OUTPUT);
