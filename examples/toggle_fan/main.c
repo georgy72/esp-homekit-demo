@@ -158,7 +158,7 @@ void contact_sensor_callback(uint8_t gpio, contact_sensor_state_t state) {
 
     printf("Toggling '%s' FAN .\n", state != CONTACT_OPEN ? "on" : "off");
 
-    switch_on.value.bool_value = state == CONTACT_OPEN ? false : true;
+    switch_on.value.bool_value = state != CONTACT_OPEN ? false : true;
 
     homekit_characteristic_notify(&switch_on, switch_on.value);
 }
@@ -255,7 +255,7 @@ void user_init(void) {
         printf("Failed to initialize led_state_gpio_read\n");
     }
 
-    gpio_update();
+    // gpio_update();
 
     create_wifi_connection_watchdog();
 }
