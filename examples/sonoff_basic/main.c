@@ -108,7 +108,7 @@ void button_callback(uint8_t gpio, button_event_t event) {
             printf("Toggling relay\n");
             switch_on.value.bool_value = !switch_on.value.bool_value;
             relay_write(switch_on.value.bool_value);
-            homekit_characteristic_notify(&switch_on, switch_on.value);
+            homekit_characteristic_notify(&switch_on, HOMEKIT_UINT8(0));
             break;
         case button_event_long_press:
             reset_configuration();
