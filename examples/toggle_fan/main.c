@@ -133,7 +133,7 @@ void gpio_init() {
 }
 
 void gpio_update() {
-    switch_on.value.bool_value = !contact_sensor_state_get(led_state_gpio_read);
+    switch_on.value.bool_value = !gpio_read(led_state_gpio_read);
     printf("State fan Value: %d\n", switch_on.value.bool_value);
     homekit_characteristic_notify(&switch_on, switch_on.value);
 }
@@ -145,6 +145,7 @@ void switch_on_callback(homekit_characteristic_t *_ch, homekit_value_t on, void 
 void button_callback(uint8_t gpio, button_event_t event) {
     switch (event) {
         case button_event_single_press:
+            printf("Press button: %d\n", gpio);
             break;
         case button_event_long_press:
             reset_configuration();
@@ -156,11 +157,11 @@ void button_callback(uint8_t gpio, button_event_t event) {
 
 void contact_sensor_callback(uint8_t gpio, contact_sensor_state_t state) {
 
-    printf("Toggling '%s' FAN .\n", state != CONTACT_OPEN ? "on" : "off");
+    printf("Toggling '%s' FAN .\n", state == false ? "on" : "off");
 
-    switch_on.value.bool_value = state != CONTACT_OPEN ? false : true;
+    switch_on.value.bool_value = !state;
 
-    // homekit_characteristic_notify(&switch_on, switch_on.value);
+    homekit_characteristic_notify(&switch_on, switch_on.value);
 }
 
 void switch_identify_task(void *_args) {
@@ -225,6 +226,7 @@ homekit_server_config_t config = {
 void on_wifi_ready() {
     is_connected_to_wifi = true;
     homekit_server_init(&config);
+    gpio_update();
 }
 
 void create_accessory_name() {
@@ -254,8 +256,6 @@ void user_init(void) {
     if (contact_sensor_create(led_state_gpio_read, contact_sensor_callback)) {
         printf("Failed to initialize led_state_gpio_read\n");
     }
-
-    // gpio_update();
 
     create_wifi_connection_watchdog();
 }
