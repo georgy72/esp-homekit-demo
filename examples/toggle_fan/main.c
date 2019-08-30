@@ -13,25 +13,23 @@
 
 #include "button.h"
 
-#define NO_CONNECTION_WATCHDOG_TIMEOUT 120000
+const int led_gpio = 2;
 
 const int led_state_gpio_read = 14; //D5 на светодиод
+
 const int one_hours_button_write_gpio = 13; //D7 на кнопку один час
 const int big_button_write_gpio = 15; //D8 на большую кнопку
-const int one_minutes_button_gpio_read = 0; //D6 на кнопку одна минута
 
-const int led_on_board_gpio = 2;
+const int button_read_one_minutes = 12; // D6
+const int button_on_board = 0;
 
-bool is_connected_to_wifi = false;
+
 void switch_on_callback(homekit_characteristic_t *_ch, homekit_value_t on, void *context);
 void button_callback(uint8_t gpio, button_event_t event);
 
-void led_write(bool on) {
-    gpio_write(led_on_board_gpio, on ? 0 : 1);
-}
 
-bool led_read() {
-    return gpio_read(led_on_board_gpio);
+void led_write(bool on) {
+    gpio_write(led_gpio, on ? 0 : 1);
 }
 
 void led_blink(int times) {
@@ -67,18 +65,18 @@ void toggle_fan(bool on) {
 }
 
 void reset_configuration_task() {
-
+    //Flash the LED first before we start the reset
     led_blink(3);
+    
+    printf("Resetting Wifi Config\n");
+    
+    wifi_config_reset();
+    
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     
     printf("Resetting HomeKit Config\n");
     
     homekit_server_reset();
-    
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-    printf("Resetting Wifi Config\n");
-    
-    wifi_config_reset();
     
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     
@@ -90,7 +88,7 @@ void reset_configuration_task() {
 }
 
 void reset_configuration() {
-    printf("Resetting Fan configuration\n");
+    printf("Resetting Sonoff configuration\n");
     xTaskCreate(reset_configuration_task, "Reset configuration", 256, NULL, 2, NULL);
 }
 
@@ -99,7 +97,7 @@ homekit_characteristic_t switch_on = HOMEKIT_CHARACTERISTIC_(
 );
 
 void gpio_init() {
-    gpio_enable(led_on_board_gpio, GPIO_OUTPUT);
+    gpio_enable(led_gpio, GPIO_OUTPUT);
     led_write(false);
     
     gpio_enable(one_hours_button_write_gpio, GPIO_OUTPUT);
@@ -109,27 +107,17 @@ void gpio_init() {
     gpio_write(big_button_write_gpio, true);
 }
 
-void gpio_update() {
-    switch_on.value.bool_value = !gpio_read(led_state_gpio_read);
-    printf("State fan Value: %d\n", switch_on.value.bool_value);
-    homekit_characteristic_notify(&switch_on, switch_on.value);
-}
-
 void switch_on_callback(homekit_characteristic_t *_ch, homekit_value_t on, void *context) {
-    toggle_fan(switch_on.value.bool_value);
+    relay_write(switch_on.value.bool_value);
 }
 
 void button_callback(uint8_t gpio, button_event_t event) {
     switch (event) {
         case button_event_single_press:
-            // printf("Press button: %d\n", gpio);
-            // switch_on.value.bool_value = !switch_on.value.bool_value;
-
-            // homekit_characteristic_notify(&switch_on, switch_on.value);
             printf("Toggling relay\n");
             switch_on.value.bool_value = !switch_on.value.bool_value;
-            toggle_fan(switch_on.value.bool_value);
-            homekit_characteristic_notify(&switch_on, HOMEKIT_UINT8(0));
+            relay_write(switch_on.value.bool_value);
+            homekit_characteristic_notify(&switch_on, switch_on.value);
             break;
         case button_event_long_press:
             reset_configuration();
@@ -139,20 +127,13 @@ void button_callback(uint8_t gpio, button_event_t event) {
     }
 }
 
-// void contact_sensor_callback(uint8_t gpio, contact_sensor_state_t state) {
-
-//     printf("Toggling '%s' FAN .\n", state == false ? "on" : "off");
-
-//     switch_on.value.bool_value = !state;
-
-//     homekit_characteristic_notify(&switch_on, switch_on.value);
-// }
-
 void switch_identify_task(void *_args) {
-    // We identify the Fan by Flashing it's LED.
+    // We identify the Sonoff by Flashing it's LED.
     for (int i=0; i<3; i++) {
         led_blink(2);
     }
+
+    led_write(false);
 
     vTaskDelete(NULL);
 }
@@ -160,23 +141,6 @@ void switch_identify_task(void *_args) {
 void switch_identify(homekit_value_t _value) {
     printf("Switch identify\n");
     xTaskCreate(switch_identify_task, "Switch identify", 128, NULL, 2, NULL);
-}
-
-void wifi_connection_watchdog_task(void *_args) {
-    vTaskDelay(NO_CONNECTION_WATCHDOG_TIMEOUT / portTICK_PERIOD_MS);
-
-    if (is_connected_to_wifi == false) {
-        led_blink(3);
-        printf("No Wifi Connection, Restarting\n");
-        sdk_system_restart();
-    }
-    
-    vTaskDelete(NULL);
-}
-
-void create_wifi_connection_watchdog() {
-    printf("Wifi connection watchdog\n");
-    xTaskCreate(wifi_connection_watchdog_task, "Wifi Connection Watchdog", 128, NULL, 3, NULL);
 }
 
 homekit_characteristic_t name = HOMEKIT_CHARACTERISTIC_(NAME, "Fan Switch");
@@ -208,9 +172,7 @@ homekit_server_config_t config = {
 };
 
 void on_wifi_ready() {
-    is_connected_to_wifi = true;
     homekit_server_init(&config);
-    // gpio_update();
 }
 
 void create_accessory_name() {
@@ -234,15 +196,10 @@ void user_init(void) {
     wifi_config_init("Fan-switch", NULL, on_wifi_ready);
     gpio_init();
 
-    if (button_create(one_minutes_button_gpio_read, 0, 4000, button_callback)) {
+    if (button_create(button_read_one_minutes, 0, 4000, button_callback)) {
         printf("Failed to initialize button\n");
     }
-    // if (button_create(12, 0, 4000, button_callback)) {
-    //     printf("Failed to initialize button\n");
-    // }
-    // if (contact_sensor_create(led_state_gpio_read, contact_sensor_callback)) {
-    //     printf("Failed to initialize led_state_gpio_read\n");
-    // }
-
-    create_wifi_connection_watchdog();
+    if (button_create(button_on_board, 0, 4000, button_callback)) {
+        printf("Failed to initialize button\n");
+    }
 }
