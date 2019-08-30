@@ -66,11 +66,11 @@ void toggle_fan_task(void *_args) {
     } else {
         off_fan();
     }
+    led_write(switch_on.value.bool_value);
     vTaskDelete(NULL);
 }
 
 void toggle_fan() {
-    led_write(on);
     xTaskCreate(toggle_fan_task, "Toggle fan", 128, NULL, 2, NULL);
 }
 
