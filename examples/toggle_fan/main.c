@@ -231,7 +231,7 @@ homekit_server_config_t config = {
 void on_wifi_ready() {
     is_connected_to_wifi = true;
     homekit_server_init(&config);
-    gpio_update();
+    // gpio_update();
 }
 
 void create_accessory_name() {

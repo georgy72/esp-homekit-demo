@@ -11,4 +11,4 @@ esptool.py \
             -ff 40m \
             0x0 ../../rboot.bin \
             0x1000 ../../blank_config.bin \
-            0x2000 ./firmware/sonoff_basic.bin
+            0x2000 ./firmware/toggle_fan.bin
