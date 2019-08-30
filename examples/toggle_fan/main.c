@@ -126,7 +126,7 @@ void gpio_init() {
 
     gpio_enable(led_state_gpio_read, GPIO_INPUT);
 
-    gpio_enable(one_minutes_button_gpio_read, GPIO_INPUT);
+    // gpio_enable(one_minutes_button_gpio_read, GPIO_INPUT);
 
     gpio_enable(big_button_write_gpio, GPIO_OUTPUT);
     gpio_write(big_button_write_gpio, true);
