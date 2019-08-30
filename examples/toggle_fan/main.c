@@ -33,7 +33,7 @@ void led_write(bool on) {
 }
 
 bool led_read() {
-    return gpio_read(led_on_board_gpio);
+    return gpio_read(led_gpio);
 }
 
 void led_blink(int times) {
