@@ -60,14 +60,18 @@ void off_fan(){
     gpio_write(button_write_big_gpio, true);
 }
 
+void toggle_fan_task(void *_args) {
+    if (on){
+        on_fan();
+    } else {
+        off_fan();
+    }
+    vTaskDelete(NULL);
+}
+
 void toggle_fan(bool on) {
     led_write(on);
-
-    // if (on){
-    //     on_fan();
-    // } else {
-    //     off_fan();
-    // }
+    xTaskCreate(toggle_fan_task, "Toggle fan", 128, NULL, 2, NULL);
 }
 
 void reset_configuration_task() {
