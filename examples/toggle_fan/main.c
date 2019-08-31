@@ -235,9 +235,11 @@ void user_init(void) {
     uart_set_baud(0, 115200);
 
     create_accessory_name();
+
+    gpio_init();
     
     wifi_config_init("Fan-switch", NULL, on_wifi_ready);
-    gpio_init();
+
 
     if (button_create(button_read_one_minutes, 0, 4000, button_callback)) {
         printf("Failed to initialize button\n");
