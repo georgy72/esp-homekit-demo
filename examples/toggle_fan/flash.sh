@@ -1,4 +1,4 @@
-SONOFF_PORT="/dev/cu.wchusbserial1430"
+SONOFF_PORT="/dev/cu.wchusbserial1420"
 
 esptool.py -p $SONOFF_PORT erase_flash
 

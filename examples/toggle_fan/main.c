@@ -95,13 +95,13 @@ void off_fan(){
 void toggle_fan_task(void *_args) {
     if (switch_on.value.bool_value != !contact_sensor_state_get(led_state_gpio_read)){
 
-        printf("Fan power: %d\n", switch_on.value.bool_value);
-
         if (switch_on.value.bool_value){
             on_fan();
         } else {
             off_fan();
         }
+
+        printf("Fan power: %d\n", switch_on.value.bool_value);
 
         led_write(switch_on.value.bool_value);
         vTaskDelete(NULL);
@@ -215,7 +215,7 @@ homekit_server_config_t config = {
 void on_wifi_ready() {
     is_connected_to_wifi = true;
     homekit_server_init(&config);
-    gpio_update();
+    // gpio_update();
 }
 
 void create_accessory_name() {
