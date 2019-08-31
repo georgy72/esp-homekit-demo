@@ -109,7 +109,6 @@ void toggle_fan() {
     if (switch_on.value.bool_value == contact_sensor_state_get(led_state_gpio_read)){
         xTaskCreate(toggle_fan_task, "Toggle fan", 128, NULL, 2, NULL);
     }
-    led_write(switch_on.value.bool_value);
 }
 
 void gpio_init() {
@@ -151,6 +150,8 @@ void contact_sensor_callback(uint8_t gpio, contact_sensor_state_t state) {
     switch_on.value.bool_value = state != CONTACT_OPEN ? true : false;
 
     printf("Toggling '%s' FAN .\n", switch_on.value.bool_value == true ? "on" : "off");
+
+    led_write(switch_on.value.bool_value);
 
     homekit_characteristic_notify(&switch_on, switch_on.value);
 }
