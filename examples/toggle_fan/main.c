@@ -93,23 +93,23 @@ void off_fan(){
 }
 
 void toggle_fan_task(void *_args) {
-    if (switch_on.value.bool_value != !contact_sensor_state_get(led_state_gpio_read)){
 
-        if (switch_on.value.bool_value){
-            on_fan();
-        } else {
-            off_fan();
-        }
-
-        printf("Fan power: %d\n", switch_on.value.bool_value);
-
-        led_write(switch_on.value.bool_value);
-        vTaskDelete(NULL);
+    if (switch_on.value.bool_value){
+        on_fan();
+    } else {
+        off_fan();
     }
+
+    printf("Fan power: %d\n", switch_on.value.bool_value);
+
+    led_write(switch_on.value.bool_value);
+    vTaskDelete(NULL);
 }
 
 void toggle_fan() {
-    xTaskCreate(toggle_fan_task, "Toggle fan", 128, NULL, 2, NULL);
+    if (switch_on.value.bool_value == contact_sensor_state_get(led_state_gpio_read)){
+        xTaskCreate(toggle_fan_task, "Toggle fan", 128, NULL, 2, NULL);
+    }
 }
 
 void gpio_init() {
