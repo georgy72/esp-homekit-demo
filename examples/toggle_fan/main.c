@@ -108,7 +108,6 @@ void toggle_fan_task(void *_args) {
 
 void toggle_fan() {
     if (switch_on.value.bool_value == contact_sensor_state_get(led_state_gpio_read)){
-        printf("switch_on.value.bool_value: %d ; get contact sensor: %d\n", switch_on.value.bool_value, contact_sensor_state_get(led_state_gpio_read));
         xTaskCreate(toggle_fan_task, "Toggle fan", 128, NULL, 2, NULL);
     }
 }
@@ -192,9 +191,9 @@ homekit_accessory_t *accessories[] = {
         HOMEKIT_SERVICE(ACCESSORY_INFORMATION, .characteristics=(homekit_characteristic_t*[]){
             &name,
             HOMEKIT_CHARACTERISTIC(MANUFACTURER, "iTEAD"),
-            HOMEKIT_CHARACTERISTIC(SERIAL_NUMBER, "037A2BABF19D"),
+            HOMEKIT_CHARACTERISTIC(SERIAL_NUMBER, "037F2BABF19F"),
             HOMEKIT_CHARACTERISTIC(MODEL, "Basic"),
-            HOMEKIT_CHARACTERISTIC(FIRMWARE_REVISION, "0.1.6"),
+            HOMEKIT_CHARACTERISTIC(FIRMWARE_REVISION, "1.0.0"),
             HOMEKIT_CHARACTERISTIC(IDENTIFY, switch_identify),
             NULL
         }),
