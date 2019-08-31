@@ -93,14 +93,19 @@ void off_fan(){
 }
 
 void toggle_fan_task(void *_args) {
-    printf("Fan power: %d\n", switch_on.value.bool_value);
-    if (switch_on.value.bool_value){
-        on_fan();
-    } else {
-        off_fan();
+    if (switch_on.value.bool_value != !contact_sensor_state_get(led_state_gpio_read)){
+
+        printf("Fan power: %d\n", switch_on.value.bool_value);
+
+        if (switch_on.value.bool_value){
+            on_fan();
+        } else {
+            off_fan();
+        }
+
+        led_write(switch_on.value.bool_value);
+        vTaskDelete(NULL);
     }
-    led_write(switch_on.value.bool_value);
-    vTaskDelete(NULL);
 }
 
 void toggle_fan() {
@@ -151,7 +156,6 @@ void contact_sensor_callback(uint8_t gpio, contact_sensor_state_t state) {
 }
 
 void switch_identify_task(void *_args) {
-    // We identify the Fan by Flashing it's LED.
     for (int i=0; i<3; i++) {
         led_blink(2);
     }
