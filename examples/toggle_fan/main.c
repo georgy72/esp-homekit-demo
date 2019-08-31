@@ -102,7 +102,6 @@ void toggle_fan_task(void *_args) {
 
     printf("Fan power: %d\n", switch_on.value.bool_value);
 
-    led_write(switch_on.value.bool_value);
     vTaskDelete(NULL);
 }
 
@@ -110,6 +109,7 @@ void toggle_fan() {
     if (switch_on.value.bool_value == contact_sensor_state_get(led_state_gpio_read)){
         xTaskCreate(toggle_fan_task, "Toggle fan", 128, NULL, 2, NULL);
     }
+    led_write(switch_on.value.bool_value);
 }
 
 void gpio_init() {
