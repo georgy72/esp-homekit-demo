@@ -23,6 +23,8 @@ const int button_write_big_gpio = 13;
 
 const int button_read_one_minutes = 4;
 
+const int led_on_board_gpio = 2;
+
 bool is_connected_to_wifi = false;
 void switch_on_callback(homekit_characteristic_t *_ch, homekit_value_t on, void *context);
 void button_callback(uint8_t gpio, button_event_t event);
