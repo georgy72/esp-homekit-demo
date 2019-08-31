@@ -16,7 +16,7 @@
 
 #define NO_CONNECTION_WATCHDOG_TIMEOUT 120000
 
-const int led_state_gpio_read = 15;
+const int led_state_gpio_read = 0;
 
 const int button_write_one_hours_gpio = 5;
 const int button_write_big_gpio = 13;
@@ -240,9 +240,6 @@ void user_init(void) {
     gpio_init();
 
     if (button_create(button_read_one_minutes, 0, 4000, button_callback)) {
-        printf("Failed to initialize button\n");
-    }
-    if (button_create(0, 0, 4000, button_callback)) {
         printf("Failed to initialize button\n");
     }
     if (contact_sensor_create(led_state_gpio_read, contact_sensor_callback)) {
