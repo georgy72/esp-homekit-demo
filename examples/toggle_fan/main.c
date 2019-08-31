@@ -107,7 +107,8 @@ void toggle_fan_task(void *_args) {
 }
 
 void toggle_fan() {
-    if (switch_on.value.bool_value == contact_sensor_state_get(led_state_gpio_read)){
+    if (switch_on.value.bool_value != contact_sensor_state_get(led_state_gpio_read)){
+        printf("switch_on.value.bool_value: %d ; get contact sensor: %d\n", switch_on.value.bool_value, contact_sensor_state_get(led_state_gpio_read));
         xTaskCreate(toggle_fan_task, "Toggle fan", 128, NULL, 2, NULL);
     }
 }
@@ -148,7 +149,7 @@ void button_callback(uint8_t gpio, button_event_t event) {
 
 void contact_sensor_callback(uint8_t gpio, contact_sensor_state_t state) {
 
-    switch_on.value.bool_value = state == CONTACT_OPEN ? 1 : 0;
+    switch_on.value.bool_value = state == CONTACT_OPEN ? true : false;
 
     printf("Toggling '%s' FAN .\n", switch_on.value.bool_value == true ? "on" : "off");
 
