@@ -23,8 +23,6 @@ const int button_write_big_gpio = 13;
 
 const int button_read_one_minutes = 4;
 
-const int led_on_board_gpio = 2;
-
 bool is_connected_to_wifi = false;
 void switch_on_callback(homekit_characteristic_t *_ch, homekit_value_t on, void *context);
 void button_callback(uint8_t gpio, button_event_t event);
@@ -102,6 +100,7 @@ void toggle_fan_task(void *_args) {
 
     printf("Fan power: %d\n", switch_on.value.bool_value);
 
+    led_write(switch_on.value.bool_value);
     vTaskDelete(NULL);
 }
 
@@ -150,8 +149,6 @@ void contact_sensor_callback(uint8_t gpio, contact_sensor_state_t state) {
     switch_on.value.bool_value = state != CONTACT_OPEN ? true : false;
 
     printf("Toggling '%s' FAN .\n", switch_on.value.bool_value == true ? "on" : "off");
-
-    led_write(switch_on.value.bool_value);
 
     homekit_characteristic_notify(&switch_on, switch_on.value);
 }
