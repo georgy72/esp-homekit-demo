@@ -16,9 +16,9 @@
 
 #define NO_CONNECTION_WATCHDOG_TIMEOUT 120000
 
-const int led_state_gpio_read = 13;
+const int led_state_gpio_read = 5;
 
-const int button_write_one_hours_gpio = 5;
+const int button_write_one_hours_gpio = 13;
 const int button_write_big_gpio = 0;
 
 const int button_read_one_minutes = 4;
