@@ -95,11 +95,11 @@ void off_fan(){
 void toggle_fan_task(void *_args) {
     if (switch_on.value.bool_value != !contact_sensor_state_get(led_state_gpio_read)){
 
-        if (switch_on.value.bool_value){
-            on_fan();
-        } else {
-            off_fan();
-        }
+        // if (switch_on.value.bool_value){
+        //     on_fan();
+        // } else {
+        //     off_fan();
+        // }
 
         printf("Fan power: %d\n", switch_on.value.bool_value);
 
